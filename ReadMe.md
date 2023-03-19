@@ -1,6 +1,6 @@
 # Docker for Velodyne 3D lidars on ROS 2
 
-Author: [Tobit Flatscher](https://github.com/2b-t) (June 2022 - March 2023)
+Author: [Tobit Flatscher](https://github.com/2b-t) (March 2023)
 
 [![Build](https://github.com/2b-t/velodyne-ros2-docker/actions/workflows/build.yml/badge.svg)](https://github.com/2b-t/velodyne-ros2-docker/actions/workflows/build.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
