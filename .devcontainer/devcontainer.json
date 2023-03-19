@@ -1,0 +1,11 @@
+{
+  "name": "Docker for Velodyne VLP-16 and VLP-32 lidar with ROS 2",
+  "dockerComposeFile": [
+    "../docker/docker-compose-gui.yml" // Alternatives: "../docker/docker-compose-gui.yml", "../docker/docker-compose-gui-nvidia.yml"
+  ],
+  "service": "velodyne_ros2",
+	"workspaceFolder": "/ros2_ws",
+  "shutdownAction": "stopCompose",
+  "extensions": [
+  ]
+}

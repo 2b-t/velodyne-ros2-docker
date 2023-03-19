@@ -1,0 +1,10 @@
+version: "3.9"
+services:
+  velodyne_ros2:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: velodyne_ros2
+    network_mode: "host"
+    tty: true
+
