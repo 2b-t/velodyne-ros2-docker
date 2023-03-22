@@ -7,21 +7,21 @@ Author: [Tobit Flatscher](https://github.com/2b-t) (March 2023)
 
 
 ## 0. Overview
-This repository contains a Dockerfile and all the documentation required to launch a [Velodyne 3D lidar](https://velodynelidar.com/surround-lidar/) such as the VLP-16 or VLP-32 with the [Robot Operating System ROS 2](https://docs.ros.org/en/humble/index.html).
+This repository contains a Dockerfile and all the documentation required for setting up and launching a [Velodyne 3D lidar](https://velodynelidar.com/surround-lidar/) such as the VLP-16 or VLP-32 with the [Robot Operating System ROS 2](https://docs.ros.org/en/humble/index.html).
 
 ## 1. Preparing
 
-The Velodyne lidars are common in two different versions, with an **interface box** or with an **8-pin M12 connector** only. The ones with interface boxes are generally quite expensive on the second-hand market while the ones with M12 connector often go comparably cheap.
+The Velodyne lidars are common in two different versions, with an **interface box** or with an **8-pin M12 connector** (M12MP-A) only. The ones with interface boxes are generally quite expensive on the second-hand market while the ones with M12 connector often go comparably cheap.
 
 | ![Hardware integration with Velodyne LiDAR OLD – OxTS Support](https://support.oxts.com/hc/article_attachments/115006706969/mceclip0.png) | ![Hardware Integration with Velodyne LiDAR – OxTS Support](https://support.oxts.com/hc/article_attachments/360017839699/mceclip0.png) |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | Velodyne VLP-16 with interface box                           | Male 8-pin M12 connector                                     |
 
-The interface box already comes with an overcurrent protection and gives you access to an Ethernet port as well as a power connector. For the 8-pin power connector on the other hand you will have to create your own cable. This can though be done with comparably little effort as shown below.
+The interface box already comes with an overcurrent protection and gives you access to an Ethernet port as well as a power connector. For the 8-pin power connector on the other hand you will have to create your own cable. This can though be done with comparably little effort (without cutting the cable) as shown below.
 
 ### 1.1 Creating your own cable
 
-If you got yourself a lidar without the interface box - only with the M12 connector - you will have to make a cable for it yourself. Fortunately enough this can be done without any soldering. The pin-out for this can be found in the [offical data sheet](https://pdf.directindustry.com/pdf/velodynelidar/vlp-16-datasheets/182407-676097.html).
+If you got yourself a lidar without the interface box - only with the **M12 connector** - you will have to make a cable for it yourself. Fortunately enough this can be done without any soldering. The **pin-out** for this can be found inside the [**offical data sheet**](https://pdf.directindustry.com/pdf/velodynelidar/vlp-16-datasheets/182407-676097.html).
 
 Get yourself a cheap 12V 1A power supply such as this [Zolt 45W](https://www.amazon.co.uk/dp/B08NBWHKGG?psc=1&ref=ppx_yo2ov_dt_b_product_details), a corresponding [pigtail power cable](https://www.amazon.co.uk/dp/B08JKQ3PF9?psc=1&ref=ppx_yo2ov_dt_b_product_details) (in this case positive center), an [Ethernet network cable](https://www.amazon.co.uk/gp/product/B00DZJNO4M/ref=ox_sc_saved_image_1?smid=A3GL1BA201XJVN&psc=1) and a [female 8-pin M12 connector](https://www.aliexpress.com/item/32839854023.html) (see pictures below).
 
@@ -33,7 +33,7 @@ The Ethernet cable will likely be T-568 B (see image below):
 
 ![The Pros & Cons of T568a vs T568b & Which To Use](https://cdn.shopify.com/s/files/1/0014/6404/1539/files/568a-vs-568b-chart_1024x1024.png?v=1567709877)
 
-The female 8-pin M12 connector should already be numbered on the front. In case it is not please check the [offical data sheet](https://pdf.directindustry.com/pdf/velodynelidar/vlp-16-datasheets/182407-676097.html) keeping in mind that the side depicted is the male sensor-side while you are interested in the matching mirrored female client-side. In case you mess this up you might fatally damage your lidar! You will have to connect the pins as follows:
+The female 8-pin M12 connector should already be numbered on the front. In case it is not please check the [offical data sheet](https://pdf.directindustry.com/pdf/velodynelidar/vlp-16-datasheets/182407-676097.html) keeping in mind that the side depicted is the male sensor-side while you are interested in the matching (mirrored) female client-side. In case you mess this up you might fatally damage your lidar! You will have to connect the pins as follows:
 
 | 8-pin connector pin number | Wire                         | Signal       |
 | -------------------------- | ---------------------------- | ------------ |
@@ -47,7 +47,7 @@ The female 8-pin M12 connector should already be numbered on the front. In case 
 | 8                          | Power cable black            | Ground       |
 
 ## 2. Configuring
-The set-up is similar to the Velodyne [VLP-16](http://wiki.ros.org/velodyne/Tutorials/Getting%20Started%20with%20the%20Velodyne%20VLP16) and the [HDL-32E](http://wiki.ros.org/velodyne/Tutorials/Getting%20Started%20with%20the%20HDL-32E) lidar in ROS. As a first step we will have to **find out which network interface your lidar is connected to**. For this launch the following command 
+The set-up is similar to the Velodyne [VLP-16](http://wiki.ros.org/velodyne/Tutorials/Getting%20Started%20with%20the%20Velodyne%20VLP16) and the [HDL-32E](http://wiki.ros.org/velodyne/Tutorials/Getting%20Started%20with%20the%20HDL-32E) lidar in ROS. As a first step we will have to **find out which network interface our lidar is connected to**. For this launch the following command 
 
 ```bash
 $ for d in /sys/class/net/*; do echo "$(basename ${d}): $(cat $d/{carrier,operstate} | tr '\n' ' ')"; done
@@ -90,13 +90,13 @@ Let us check the available connections with `nmcli`:
 $ nmcli connection show
 ```
 
-Assign yourself the IP address `192.168.1.100`. Feel free to replace `100` with any number between `1` and `254` apart from the one the Velodyne is configured to (`201` by default).
+Let's create a **new connection**, assigning us the IP address `192.168.1.100`. Feel free to replace `100` with any number between `1` and `254` apart from the one the Velodyne is configured to (`201` by default).
 
 ```bash
 $ nmcli connection add con-name velodyne-con ifname eno1 type ethernet ip4 192.168.1.100/24
 ```
 
-Now let's inspect the connection with.
+Now let's inspect the connection with:
 
 ```bash
 $ nmcli connection show velodyne-con
@@ -114,13 +114,13 @@ Let's show the IP address of our device:
 $ ip address show dev eno1
 ```
 
-[Temporarily configure yourself an IP address](https://ubuntu.com/server/docs/network-configuration) in the `192.168.3.X` range:
+**[Temporarily configure yourself an IP address](https://ubuntu.com/server/docs/network-configuration) in the `192.168.3.X` range**:
 
 ```bash
 $ sudo ip addr add 192.168.3.100 dev eno1
 ```
 
-Set up a temporary route to the Velodyne. In case a different address was configured for the Velodyne replace the address below by its address.
+Set up a **temporary route to the Velodyne**. In case a different address was configured for the Velodyne replace the address below by its address.
 
 ```bash
 $ sudo route add 192.168.1.201 dev eno1
@@ -130,7 +130,7 @@ $ sudo route add 192.168.1.201 dev eno1
 $ ip route show dev eno1
 ```
 
-Now you should be able to open the webpage [http://192.168.1.201](http://192.168.1.201) and change the configuration for your Velodyne.
+Now you should be able to open the webpage [http://192.168.1.201](http://192.168.1.201) and change the configuration for your Velodyne if desired/needed.
 
 ![Velodyne user interface](./media/velodyne-user-interface.png)
 
@@ -153,12 +153,12 @@ Then build the Docker container with
 $ docker compose -f docker-compose-gui.yml build
 ```
 or directly with the [`devcontainer` in Visual Studio Code](https://code.visualstudio.com/docs/devcontainers/containers). For Nvidia graphic cards the file `docker-compose-gui-nvidia.yml` in combination with the [`nvidia-container-runtime`](https://nvidia.github.io/nvidia-container-runtime/) has to be used instead.
-After it is done building **connect the Velodyne lidar**, start the container
+After it is done building, **connect the Velodyne lidar**, start the container
 
 ```shell
 $ docker compose -f docker-compose-gui.yml up
 ```
-and launch the [corresponding **Velodyne Pointcloud launch file**](https://github.com/ros-drivers/velodyne/tree/ros2/velodyne_pointcloud/launch). For the VLP-16:
+and launch the [corresponding **Velodyne Pointcloud launch file**](https://github.com/ros-drivers/velodyne/tree/ros2/velodyne/launch). E.g. for the VLP-16:
 ```shell
 $ source /opt/ros/humble/setup.bash
 $ ros2 launch velodyne velodyne-all-nodes-VLP16-launch.py
@@ -185,6 +185,6 @@ Finally **visualize the points with Rviz** by launching
 ```shell
 $ ros2 run rviz2 rviz2 -f velodyne
 ```
-in another terminal and display the topics published by the Velodyne.
+in another terminal and display the pointcloud published by the Velodyne.
 
 ![Velodyne VLP-16 visualization in Rviz](./media/velodyne-rviz2.png)
