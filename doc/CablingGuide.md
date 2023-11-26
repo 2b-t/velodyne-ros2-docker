@@ -31,7 +31,7 @@ The female 8-pin M12 connector should already be numbered on the front. In case 
 
 You will have to connect the pins on the **computer-side** as follows:
 
-<img src="../media/m12_lidar_pinout.png" alt="Lidar-side pinout =" style="zoom:25%;" />
+![Computer-side pin-out of the lidar](../media/m12_lidar_pinout.png)
 
 | 8-pin connector pin number | Wire                         | Signal       |
 | -------------------------- | ---------------------------- | ------------ |
