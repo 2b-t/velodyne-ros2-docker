@@ -1,15 +1,13 @@
 # Docker for Velodyne 3D lidars on ROS 2
 
-Author: [Tobit Flatscher](https://github.com/2b-t) (March 2023)
+Author: [Tobit Flatscher](https://github.com/2b-t) (2023)
 
 [![Build](https://github.com/2b-t/velodyne-ros2-docker/actions/workflows/build.yml/badge.svg)](https://github.com/2b-t/velodyne-ros2-docker/actions/workflows/build.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 
 
 ## 0. Overview
-This repository contains a Dockerfile and all the documentation required for setting up and launching a [Velodyne 3D lidar](https://velodynelidar.com/surround-lidar/) such as the VLP-16 or VLP-32 with the [Robot Operating System ROS 2](https://docs.ros.org/en/humble/index.html).
-
-## 1. Preparing
+This repository contains a Dockerfile and all the documentation required for setting up and launching a [Velodyne 3D lidar](https://velodynelidar.com/surround-lidar/) such as the VLP-16 or VLP-32 with the [Robot Operating System ROS 2](https://docs.ros.org/en/humble/index.html). I have tested this with both VLP-16 and VLP-32 lidars.
 
 The Velodyne lidars are common in two different versions, with an **interface box** or with an **8-pin M12 connector** (M12MP-A) only. The ones with interface boxes are generally quite expensive on the second-hand market while the ones with M12 connector often go comparably cheap.
 
@@ -17,36 +15,9 @@ The Velodyne lidars are common in two different versions, with an **interface bo
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | Velodyne VLP-16 with interface box                           | Male 8-pin M12 connector                                     |
 
-The interface box already comes with an overcurrent protection and gives you access to an Ethernet port as well as a power connector. For the 8-pin power connector on the other hand you will have to create your own cable. This can though be done with comparably little effort (without cutting the cable) as shown below.
+The interface box already comes with an overcurrent protection and gives you access to an Ethernet port as well as a power connector. For the 8-pin power connector on the other hand you will have to create your own cable. This can though be done with comparably little effort (without cutting the cable). In case you bought one without the interface box have a look at the **[cabling guide](./doc/CablingGuide.md) in this repository for information on making your own cable**.
 
-### 1.1 Creating your own cable
-
-If you got yourself a lidar without the interface box - only with the **M12 connector** - you will have to make a cable for it yourself. Fortunately enough this can be done without any soldering. The **pin-out** for this can be found inside the [**offical data sheet**](https://pdf.directindustry.com/pdf/velodynelidar/vlp-16-datasheets/182407-676097.html).
-
-Get yourself a cheap 12V 1A power supply such as this [Zolt 45W](https://www.amazon.co.uk/dp/B08NBWHKGG?psc=1&ref=ppx_yo2ov_dt_b_product_details), a corresponding [pigtail power cable](https://www.amazon.co.uk/dp/B08JKQ3PF9?psc=1&ref=ppx_yo2ov_dt_b_product_details) (in this case positive center), an [Ethernet network cable](https://www.amazon.co.uk/gp/product/B00DZJNO4M/ref=ox_sc_saved_image_1?smid=A3GL1BA201XJVN&psc=1) and a [female 8-pin M12 connector](https://www.aliexpress.com/item/32839854023.html) (see pictures below).
-
-| ![img](https://m.media-amazon.com/images/W/IMAGERENDERING_521856-T1/images/I/51V3jPySIAS._AC_SL1000_.jpg) | ![img](https://m.media-amazon.com/images/W/IMAGERENDERING_521856-T1/images/I/51ebxDprQTL._AC_SL1100_.jpg) | ![img](https://m.media-amazon.com/images/W/IMAGERENDERING_521856-T1/images/I/61ZVtKwRxhL._SL1500_.jpg) | ![Shielded M12 8 Pin A-Code Female Field Termination Connector, 24-20AWG -  M12FT8AFS](https://www.l-com.com/Content/Images/Product/Medium/M12FT8AFS_250x250_View1.jpg) |
-| ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| 12V 1A power supply                                          | Pigtail 5.5mm x 2.1mm power cable                            | Ethernet network cable                                       | Female 8-pin M12 connector                                   |
-
-The Ethernet cable will likely be T-568 B (see image below):
-
-![The Pros & Cons of T568a vs T568b & Which To Use](https://cdn.shopify.com/s/files/1/0014/6404/1539/files/568a-vs-568b-chart_1024x1024.png?v=1567709877)
-
-The female 8-pin M12 connector should already be numbered on the front. In case it is not please check the [offical data sheet](https://pdf.directindustry.com/pdf/velodynelidar/vlp-16-datasheets/182407-676097.html) keeping in mind that the side depicted is the male sensor-side while you are interested in the matching (mirrored) female client-side. In case you mess this up you might fatally damage your lidar! You will have to connect the pins as follows:
-
-| 8-pin connector pin number | Wire                         | Signal       |
-| -------------------------- | ---------------------------- | ------------ |
-| 1                          | Ethernet T-568B green        | Ethernet RX- |
-| 2                          | Ethernet T-568B light-green  | Ethernet RX+ |
-| 3                          | Ethernet T-568B orange       | Ethernet TX- |
-| 4                          | Ethernet T-568B light-orange | Ethernet TX+ |
-| 5                          | -                            | -            |
-| 6                          | -                            | -            |
-| 7                          | Power cable white            | +12V         |
-| 8                          | Power cable black            | Ground       |
-
-## 2. Configuring
+## 1. Configuring
 The set-up is similar to the Velodyne [VLP-16](http://wiki.ros.org/velodyne/Tutorials/Getting%20Started%20with%20the%20Velodyne%20VLP16) and the [HDL-32E](http://wiki.ros.org/velodyne/Tutorials/Getting%20Started%20with%20the%20HDL-32E) lidar in ROS. As a first step we will have to **find out which network interface our lidar is connected to**. For this launch the following command 
 
 ```bash
@@ -140,7 +111,7 @@ Inside your Dockerfile make sure to use the `network_mode` `host` option:
     network_mode: "host"
 ```
 
-## 3. Launching
+## 2. Launching
 Allow the container to display contents on your host machine by typing
 
 ```bash
