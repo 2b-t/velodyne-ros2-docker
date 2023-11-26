@@ -23,7 +23,7 @@ Get yourself a cheap 12V 1A power supply such as this [Zolt 45W](https://www.ama
 | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | 12V 1A power supply                                          | Pigtail 5.5mm x 2.1mm power cable                            | Ethernet network cable                                       | Female 8-pin M12 connector                                   |
 
-The Ethernet cable will likely be **T-568 B** (see image below):
+The Ethernet cable will likely be **T-568 B** (see image below). The cross-over cable depicted only serves illustrative purposes as this was the best picture I could find onlin that depicted both 568A and 568B layouts.
 
 ![The Pros & Cons of T568a vs T568b & Which To Use](https://cdn.shopify.com/s/files/1/0014/6404/1539/files/568a-vs-568b-chart_1024x1024.png?v=1567709877)
 
